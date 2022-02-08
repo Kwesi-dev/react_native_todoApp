@@ -1,11 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
+import { useState } from 'react'
+import Header from './components/Header';
+import TodoItem from './components/TodoItem';
+import AddTodos from './components/AddTodos';
 export default function App() {
+  const [todos, setTodos] = useState([
+    {name: 'buy a coffee', key: '1'},
+    {name: 'complete react native', key: '2'},
+    {name: 'get a wirless mouse and keyboard', key: '3'},
+    {name: 'buy a new laptop', key: '4'},
+  ])
+
+  const press = (key)=>{
+     setTodos((prevTodos)=> prevTodos.filter(item=> item.key != key))
+  }
+  const changeTodos = (name)=>{
+    setTodos((prevTodos)=>{
+      return[
+        {name: name, key: Math.random().toString()},
+        ...prevTodos
+      ]
+    })
+  }
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Header/>
+      <View style={styles.content}>
+        <AddTodos changeTodos={changeTodos}/>
+        <FlatList
+          data={todos}
+          renderItem={({ item })=>(
+            <TodoItem item={item} press={press}/>
+          )}
+            />
+      </View>
     </View>
   );
 }
@@ -13,8 +41,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#fff'
   },
+  content:{
+    marginTop: 50,
+  }
 });
