@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useState } from 'react'
 import Header from './components/Header';
 import TodoItem from './components/TodoItem';
@@ -15,26 +15,34 @@ export default function App() {
      setTodos((prevTodos)=> prevTodos.filter(item=> item.key != key))
   }
   const changeTodos = (name)=>{
-    setTodos((prevTodos)=>{
-      return[
-        {name: name, key: Math.random().toString()},
-        ...prevTodos
-      ]
-    })
+    if(name.length > 3){
+      setTodos((prevTodos)=>{
+        return[
+          {name: name, key: Math.random().toString()},
+          ...prevTodos
+        ]
+      })
+    }else{
+      Alert.alert("Oops!", "todo name must be alteast 3 characters", [{text: "understood"}])
+    }
   }
   return (
-    <View style={styles.container}>
-      <Header/>
-      <View style={styles.content}>
-        <AddTodos changeTodos={changeTodos}/>
-        <FlatList
-          data={todos}
-          renderItem={({ item })=>(
-            <TodoItem item={item} press={press}/>
-          )}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        <Header/>
+        <View style={styles.content}>
+          <AddTodos changeTodos={changeTodos}/>
+          <View style={styles.list}>
+            <FlatList
+              data={todos}
+              renderItem={({ item })=>(
+                <TodoItem item={item} press={press}/>
+                )}
             />
+          </View>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -45,5 +53,10 @@ const styles = StyleSheet.create({
   },
   content:{
     marginTop: 50,
+    flex: 1,
+  },
+  list:{
+    flex: 1
   }
+
 });
